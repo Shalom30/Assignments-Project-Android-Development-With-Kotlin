@@ -24,37 +24,54 @@ import com.gradecalc.ui.theme.*
 @Composable
 fun PreviewScreen(
     students: List<Student>,
-    onCalculate: () -> Unit,   // Lambda parameter
-    onBack: () -> Unit         // Lambda parameter
+    onCalculate: () -> Unit,
+    onBack: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(NavyDeep)
+            .background(DarkBg)
     ) {
         // ── Top Bar ───────────────────────────────────────────────────────
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(NavySurface)
+                .background(DarkSurface)
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onBack) {          // Lambda
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextSecondary)
+            IconButton(onClick = onBack) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = TextSecondary
+                )
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Preview Data", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                Text("${students.size} students found", fontSize = 12.sp, color = TextSecondary)
+                Text(
+                    "Preview Data",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+                Text(
+                    "${students.size} students found",
+                    fontSize = 12.sp,
+                    color = TextSecondary
+                )
             }
             Spacer(modifier = Modifier.weight(1f))
             Button(
-                onClick = onCalculate,              // Lambda
+                onClick = onCalculate,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = AccentGreen)
             ) {
-                Icon(Icons.Default.Calculate, contentDescription = null, modifier = Modifier.size(16.dp))
+                Icon(
+                    Icons.Default.Calculate,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Calculate Grades", fontWeight = FontWeight.SemiBold)
             }
@@ -67,10 +84,10 @@ fun PreviewScreen(
                 .padding(horizontal = 24.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StatChip("Students", "${students.size}", AccentBlue, Modifier.weight(1f))
-            StatChip("Max CA", "40", AccentCyan, Modifier.weight(1f))
-            StatChip("Max Exam", "60", AccentPurple, Modifier.weight(1f))
-            StatChip("Total Max", "100", AccentGreen, Modifier.weight(1f))
+            StatChip("Students", "${students.size}", AccentBlue,   Modifier.weight(1f))
+            StatChip("Max CA",   "40",               AccentCyan,   Modifier.weight(1f))
+            StatChip("Max Exam", "60",               AccentPurple, Modifier.weight(1f))
+            StatChip("Total Max","100",              AccentGreen,  Modifier.weight(1f))
         }
 
         // ── Table ─────────────────────────────────────────────────────────
@@ -79,42 +96,42 @@ fun PreviewScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .border(1.dp, NavyBorder, RoundedCornerShape(16.dp))
+                .border(1.dp, DarkBorder, RoundedCornerShape(16.dp))
         ) {
             Column {
-                // Header
+                // Header row
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(AccentBlue.copy(alpha = 0.2f))
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
-                    TableHead("No.", 0.08f)
-                    TableHead("Student Name", 0.4f)
-                    TableHead("CA (Max 40)", 0.26f)
+                    TableHead("No.",           0.08f)
+                    TableHead("Student Name",  0.40f)
+                    TableHead("CA (Max 40)",   0.26f)
                     TableHead("Exam (Max 60)", 0.26f)
                 }
 
-                HorizontalDivider(color = NavyBorder)
+                HorizontalDivider(color = DarkBorder)
 
-                // Rows
+                // Data rows
                 LazyColumn {
-                    itemsIndexed(students) { index, student ->   // Lambda
+                    itemsIndexed(students) { index, student ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
-                                    if (index % 2 == 0) NavyCard else NavySurface
+                                    if (index % 2 == 0) DarkCard else DarkSurface
                                 )
                                 .padding(horizontal = 16.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TableCell("${index + 1}", 0.08f, TextSecondary)
-                            TableCell(student.name, 0.4f, TextPrimary)
-                            TableCell("%.1f".format(student.ca), 0.26f, AccentCyan)
-                            TableCell("%.1f".format(student.exam), 0.26f, AccentPurple)
+                            TableCell("${index + 1}",                  0.08f, TextSecondary)
+                            TableCell(student.name,                    0.40f, TextPrimary)
+                            TableCell("%.1f".format(student.ca),       0.26f, AccentCyan)
+                            TableCell("%.1f".format(student.exam),     0.26f, AccentPurple)
                         }
-                        HorizontalDivider(color = NavyBorder.copy(alpha = 0.5f))
+                        HorizontalDivider(color = DarkBorder.copy(alpha = 0.5f))
                     }
                 }
             }
@@ -125,11 +142,11 @@ fun PreviewScreen(
 @Composable
 fun RowScope.TableHead(text: String, weight: Float) {
     Text(
-        text = text,
+        text     = text,
         modifier = Modifier.weight(weight),
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
-        color = AccentBlue
+        color    = AccentBlue
     )
 }
 
@@ -140,17 +157,22 @@ fun RowScope.TableCell(
     color: androidx.compose.ui.graphics.Color = TextPrimary
 ) {
     Text(
-        text = text,
+        text     = text,
         modifier = Modifier.weight(weight),
         fontSize = 13.sp,
-        color = color,
+        color    = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
     )
 }
 
 @Composable
-fun StatChip(label: String, value: String, color: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
+fun StatChip(
+    label: String,
+    value: String,
+    color: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))

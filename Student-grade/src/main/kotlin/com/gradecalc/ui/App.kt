@@ -1,10 +1,7 @@
 package com.gradecalc.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.gradecalc.data.ExcelParser
 import com.gradecalc.data.ExcelWriter
 import com.gradecalc.ui.screens.HomeScreen
@@ -13,6 +10,7 @@ import com.gradecalc.ui.screens.ResultScreen
 import com.gradecalc.ui.theme.GradeCalcTheme
 import java.io.File
 import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
 
 @Composable
 fun App() {
@@ -21,6 +19,7 @@ fun App() {
     GradeCalcTheme {
         when (state.currentScreen) {
 
+            // ── Home Screen ───────────────────────────────────────────────
             Screen.HOME -> HomeScreen(
                 filePath         = state.inputFilePath,
                 isLoading        = state.isLoading,
@@ -39,14 +38,23 @@ fun App() {
                         state.errorMessage = "File not found. Check the path and try again."
                         return@HomeScreen
                     }
+
+                    // Only Excel files allowed
+                    val ext = file.extension.lowercase()
+                    if (ext !in listOf("xlsx", "xls")) {
+                        state.errorMessage = "Only Excel files (.xlsx, .xls) are supported. Please upload an Excel file."
+                        return@HomeScreen
+                    }
+
                     state.isLoading    = true
                     state.errorMessage = null
+
                     try {
-                        val result = ExcelParser.parse(file)
-                        if (result.students.isEmpty()) {
+                        val parseResult = ExcelParser.parse(file)
+                        if (parseResult.students.isEmpty()) {
                             state.errorMessage = "No valid student data found. Check your Excel format."
                         } else {
-                            state.students      = result.students
+                            state.students      = parseResult.students
                             state.currentScreen = Screen.PREVIEW
                         }
                     } catch (e: Exception) {
@@ -57,6 +65,7 @@ fun App() {
                 }
             )
 
+            // ── Preview Screen ────────────────────────────────────────────
             Screen.PREVIEW -> PreviewScreen(
                 students    = state.students,
                 onCalculate = {
@@ -68,6 +77,7 @@ fun App() {
                 }
             )
 
+            // ── Results Screen ────────────────────────────────────────────
             Screen.RESULTS -> ResultScreen(
                 students        = state.students,
                 downloadMessage = state.downloadMessage,
@@ -78,22 +88,70 @@ fun App() {
                 onReset = {
                     state.reset()
                 },
-                onDownload = {
+                onDownload = { format ->
                     try {
                         val chooser = JFileChooser()
-                        chooser.dialogTitle  = "Save Grade Results As"
-                        chooser.selectedFile = File("grade_results.xlsx")
-                        val result = chooser.showSaveDialog(null)
-                        if (result == JFileChooser.APPROVE_OPTION) {
-                            var outputFile = chooser.selectedFile
-                            if (!outputFile.name.endsWith(".xlsx")) {
-                                outputFile = File(outputFile.absolutePath + ".xlsx")
+                        chooser.dialogTitle = "Save Grade Results As"
+
+                        when (format) {
+
+                            "PDF" -> {
+                                chooser.selectedFile = File("grade_results.pdf")
+                                chooser.fileFilter   = FileNameExtensionFilter("PDF File (*.pdf)", "pdf")
+                                val dialogResult = chooser.showSaveDialog(null)
+                                if (dialogResult == JFileChooser.APPROVE_OPTION) {
+                                    var outputFile = chooser.selectedFile
+                                    if (!outputFile.name.endsWith(".pdf")) {
+                                        outputFile = File(outputFile.absolutePath + ".pdf")
+                                    }
+                                    ExcelWriter.saveAsPdf(state.students, outputFile)
+                                    state.downloadMessage = "✅ PDF opened in browser — press Ctrl+P → Save as PDF"
+                                }
                             }
-                            ExcelWriter.writeResults(state.students, outputFile)
-                            state.downloadMessage = "Saved to: ${outputFile.absolutePath}"
+
+                            "HTML" -> {
+                                chooser.selectedFile = File("grade_results.html")
+                                chooser.fileFilter   = FileNameExtensionFilter("HTML File (*.html)", "html")
+                                val dialogResult = chooser.showSaveDialog(null)
+                                if (dialogResult == JFileChooser.APPROVE_OPTION) {
+                                    var outputFile = chooser.selectedFile
+                                    if (!outputFile.name.endsWith(".html")) {
+                                        outputFile = File(outputFile.absolutePath + ".html")
+                                    }
+                                    ExcelWriter.saveAsHtml(state.students, outputFile)
+                                    state.downloadMessage = "✅ HTML saved and opened: ${outputFile.absolutePath}"
+                                }
+                            }
+                            "EXCEL" -> {
+                                chooser.selectedFile = File("grade_results.xlsx")
+                                chooser.fileFilter   = FileNameExtensionFilter("Excel File (*.xlsx)", "xlsx")
+                                val dialogResult = chooser.showSaveDialog(null)
+                                if (dialogResult == JFileChooser.APPROVE_OPTION) {
+                                    var outputFile = chooser.selectedFile
+                                    if (!outputFile.name.endsWith(".xlsx")) {
+                                        outputFile = File(outputFile.absolutePath + ".xlsx")
+                                    }
+                                    ExcelWriter.writeResults(state.students, outputFile)
+                                    state.downloadMessage = "✅ Excel saved: ${outputFile.absolutePath}"
+                                }
+                            }
+
+                            "WORD" -> {
+                                chooser.selectedFile = File("grade_results.docx")
+                                chooser.fileFilter   = FileNameExtensionFilter("Word File (*.docx)", "docx")
+                                val dialogResult = chooser.showSaveDialog(null)
+                                if (dialogResult == JFileChooser.APPROVE_OPTION) {
+                                    var outputFile = chooser.selectedFile
+                                    if (!outputFile.name.endsWith(".docx")) {
+                                        outputFile = File(outputFile.absolutePath + ".docx")
+                                    }
+                                    ExcelWriter.saveAsWord(state.students, outputFile)
+                                    state.downloadMessage = "✅ Word saved: ${outputFile.absolutePath}"
+                                }
+                            }
                         }
                     } catch (e: Exception) {
-                        state.downloadMessage = "Failed: ${e.message}"
+                        state.downloadMessage = "❌ Failed: ${e.message}"
                     }
                 }
             )

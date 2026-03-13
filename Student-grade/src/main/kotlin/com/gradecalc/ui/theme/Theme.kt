@@ -4,34 +4,37 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
-// ── Color Palette — Deep Navy Professional Dark ───────────────────────────────
-val NavyDeep        = Color(0xFF0A0E1A)   // main background
-val NavySurface     = Color(0xFF111827)   // card/surface
-val NavyCard        = Color(0xFF1A2235)   // elevated card
-val NavyBorder      = Color(0xFF1E2D45)   // border/divider
-val AccentBlue      = Color(0xFF3B82F6)   // primary accent
-val AccentCyan      = Color(0xFF06B6D4)   // secondary accent
-val AccentGreen     = Color(0xFF10B981)   // success / grade A
-val AccentAmber     = Color(0xFFF59E0B)   // warning
-val AccentRed       = Color(0xFFEF4444)   // error / grade F
-val AccentPurple    = Color(0xFF8B5CF6)   // highlight
-val TextPrimary     = Color(0xFFF1F5F9)   // main text
-val TextSecondary   = Color(0xFF94A3B8)   // muted text
-val TextHint        = Color(0xFF475569)   // placeholder
+// ── VS Code Dark Grey Color Palette ──────────────────────────────────────────
 
-// Grade colors
-val GradeColorA     = Color(0xFF10B981)
-val GradeColorBPlus = Color(0xFF3B82F6)
+val DarkBg          = Color(0xFF1E1E1E)   // main background
+val DarkSurface     = Color(0xFF252526)   // top bar / surface
+val DarkCard        = Color(0xFF2D2D2D)   // card background
+val DarkBorder      = Color(0xFF3E3E42)   // border / divider
+
+val AccentBlue      = Color(0xFF4FC3F7)   // primary blue
+val AccentCyan      = Color(0xFF4EC9B0)   // teal / cyan
+val AccentGreen     = Color(0xFF4CAF50)   // success green
+val AccentAmber     = Color(0xFFCE9178)   // warning amber
+val AccentRed       = Color(0xFFF44747)   // error red
+val AccentPurple    = Color(0xFFC586C0)   // purple highlight
+
+val TextPrimary     = Color(0xFFD4D4D4)   // main text
+val TextSecondary   = Color(0xFF9CDCFE)   // muted text
+val TextHint        = Color(0xFF6A9955)   // placeholder / hint
+
+// ── Grade Colors ──────────────────────────────────────────────────────────────
+
+val GradeColorA     = Color(0xFF4CAF50)
+val GradeColorBPlus = Color(0xFF4FC3F7)
 val GradeColorB     = Color(0xFF6366F1)
 val GradeColorCPlus = Color(0xFFF59E0B)
 val GradeColorC     = Color(0xFFEAB308)
 val GradeColorDPlus = Color(0xFFF97316)
 val GradeColorD     = Color(0xFFEF4444)
 val GradeColorF     = Color(0xFF991B1B)
+
+// ── Grade Color Helper — used in ResultScreen and HomeScreen ──────────────────
 
 fun gradeColor(grade: String): Color = when (grade) {
     "A"  -> GradeColorA
@@ -44,17 +47,21 @@ fun gradeColor(grade: String): Color = when (grade) {
     else -> GradeColorF
 }
 
+// ── Material Theme Color Scheme ───────────────────────────────────────────────
+
 private val DarkColorScheme = darkColorScheme(
-    primary        = AccentBlue,
-    secondary      = AccentCyan,
-    background     = NavyDeep,
-    surface        = NavySurface,
-    onPrimary      = TextPrimary,
-    onSecondary    = TextPrimary,
-    onBackground   = TextPrimary,
-    onSurface      = TextPrimary,
-    error          = AccentRed
+    primary      = AccentBlue,
+    secondary    = AccentCyan,
+    background   = DarkBg,
+    surface      = DarkSurface,
+    onPrimary    = TextPrimary,
+    onSecondary  = TextPrimary,
+    onBackground = TextPrimary,
+    onSurface    = TextPrimary,
+    error        = AccentRed
 )
+
+// ── App Theme — only ONE declaration ─────────────────────────────────────────
 
 @Composable
 fun GradeCalcTheme(content: @Composable () -> Unit) {

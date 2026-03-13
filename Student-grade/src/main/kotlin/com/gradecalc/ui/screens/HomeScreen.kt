@@ -12,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gradecalc.ui.theme.*
-import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -38,19 +37,16 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(NavyDeep)
+            .background(DarkBg)
     ) {
-        // Background gradient accent
+        // Background glow
         Box(
             modifier = Modifier
                 .size(400.dp)
                 .offset(x = (-80).dp, y = (-80).dp)
                 .background(
                     brush = Brush.radialGradient(
-                        colors = listOf(
-                            AccentBlue.copy(alpha = 0.08f),
-                            Color.Transparent
-                        )
+                        colors = listOf(AccentBlue.copy(alpha = 0.06f), Color.Transparent)
                     ),
                     shape = CircleShape
                 )
@@ -88,7 +84,7 @@ fun HomeScreen(
 
             // ── Title ─────────────────────────────────────────────────────
             Text(
-                text = "GradeCalc Pro",
+                text = "GradeDesk",
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Black,
                 color = TextPrimary,
@@ -96,20 +92,20 @@ fun HomeScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Upload your Excel file to calculate student grades instantly",
+                text = "Professional student grade management for desktop",
                 fontSize = 14.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             // ── Upload Card ───────────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .width(500.dp)
                     .clip(RoundedCornerShape(20.dp))
-                    .background(NavyCard)
+                    .background(DarkCard)
                     .border(
                         width = 1.dp,
                         brush = Brush.linearGradient(
@@ -124,7 +120,6 @@ fun HomeScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    // File picker icon
                     Box(
                         modifier = Modifier
                             .size(56.dp)
@@ -145,7 +140,7 @@ fun HomeScreen(
                     // File path text field
                     OutlinedTextField(
                         value = filePath,
-                        onValueChange = onFilePathChange,   // Lambda
+                        onValueChange = onFilePathChange,
                         placeholder = {
                             Text(
                                 "C:\\Users\\yourname\\Desktop\\students.xlsx",
@@ -153,16 +148,18 @@ fun HomeScreen(
                                 fontSize = 13.sp
                             )
                         },
-                        label = { Text("Excel File Path", color = TextSecondary) },
+                        label = {
+                            Text("Excel File Path (.xlsx or .xls)", color = TextSecondary)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor      = TextPrimary,
-                            unfocusedTextColor    = TextPrimary,
-                            focusedBorderColor    = AccentBlue,
-                            unfocusedBorderColor  = NavyBorder,
-                            cursorColor           = AccentBlue,
-                            focusedContainerColor = NavySurface,
-                            unfocusedContainerColor = NavySurface
+                            focusedTextColor        = TextPrimary,
+                            unfocusedTextColor      = TextPrimary,
+                            focusedBorderColor      = AccentBlue,
+                            unfocusedBorderColor    = DarkBorder,
+                            cursorColor             = AccentBlue,
+                            focusedContainerColor   = DarkSurface,
+                            unfocusedContainerColor = DarkSurface
                         ),
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true
@@ -170,9 +167,9 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Browse button
+                    // Browse button — Excel only
                     OutlinedButton(
-                        onClick = {                         // Lambda
+                        onClick = {
                             val chosen = browseForFile()
                             if (chosen != null) onFilePathChange(chosen)
                         },
@@ -191,14 +188,14 @@ fun HomeScreen(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Browse for File", fontSize = 13.sp)
+                        Text("Browse for Excel File", fontSize = 13.sp)
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Load button
                     Button(
-                        onClick = onLoadFile,               // Lambda
+                        onClick = onLoadFile,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(52.dp),
@@ -228,8 +225,8 @@ fun HomeScreen(
                     // Error message
                     AnimatedVisibility(
                         visible = errorMessage != null,
-                        enter = fadeIn(),
-                        exit = fadeOut()
+                        enter   = fadeIn(),
+                        exit    = fadeOut()
                     ) {
                         errorMessage?.let {
                             Spacer(modifier = Modifier.height(12.dp))
@@ -252,9 +249,8 @@ fun HomeScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // ── Grade Scale Info ──────────────────────────────────────────
             GradeScaleRow()
         }
     }
@@ -263,16 +259,21 @@ fun HomeScreen(
 @Composable
 fun GradeScaleRow() {
     val grades = listOf(
-        "A" to "80-100", "B+" to "70-79", "B" to "60-69",
-        "C+" to "55-59", "C" to "50-54", "D+" to "45-49",
-        "D" to "40-44", "F" to "0-39"
+        "A"  to "80-100",
+        "B+" to "70-79",
+        "B"  to "60-69",
+        "C+" to "55-59",
+        "C"  to "50-54",
+        "D+" to "45-49",
+        "D"  to "40-44",
+        "F"  to "0-39"
     )
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Grading Scale", fontSize = 12.sp, color = TextHint)
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            grades.forEach { (grade, range) ->             // Lambda
+            grades.forEach { (grade, range) ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(
                         modifier = Modifier
@@ -296,11 +297,13 @@ fun GradeScaleRow() {
     }
 }
 
-// Opens system file picker dialog — lambda called on button click
+// ── File picker — Excel files only ───────────────────────────────────────────
 private fun browseForFile(): String? {
     val chooser = JFileChooser()
-    chooser.dialogTitle = "Select Excel File"
-    chooser.fileFilter = FileNameExtensionFilter("Excel Files (*.xlsx, *.xls)", "xlsx", "xls")
+    chooser.dialogTitle = "Select an Excel File"
+    chooser.fileFilter  = FileNameExtensionFilter(
+        "Excel Files (*.xlsx, *.xls)", "xlsx", "xls"
+    )
     val result = chooser.showOpenDialog(null)
     return if (result == JFileChooser.APPROVE_OPTION) chooser.selectedFile.absolutePath else null
 }
