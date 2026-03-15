@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm") version "1.9.23"
     id("org.jetbrains.compose") version "1.6.2"
+    id("org.jetbrains.dokka") version "1.9.10"
 }
 
 group = "com.gradecalc"
@@ -12,6 +13,12 @@ repositories {
     mavenCentral()
     google()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven { url = uri("https://maven.google.com") }
+    maven { url = uri("https://jcenter.bintray.com") }
+    maven { url = uri("https://plugins.gradle.org/m2/") }
+    mavenCentral()
+    gradlePluginPortal()
+
 }
 
 kotlin {
@@ -40,6 +47,7 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.26.1")
     implementation("commons-io:commons-io:2.15.1")
     implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.10")
 }
 
 compose.desktop {

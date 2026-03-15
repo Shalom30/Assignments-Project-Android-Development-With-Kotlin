@@ -11,10 +11,16 @@ import 'screens/student/student_home.dart';
 import 'screens/teacher/teacher_home.dart';
 import 'screens/admin/admin_home.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ClassSenseApp());
+}
+
+class DefaultFirebaseOptions {
+  static var currentPlatform;
 }
 
 class ClassSenseApp extends StatelessWidget {

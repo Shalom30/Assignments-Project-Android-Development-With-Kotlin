@@ -12,9 +12,7 @@ class GpsService {
 
   Future<Position> getCurrentPosition() async {
     return await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
+      desiredAccuracy: LocationAccuracy.high,
     );
   }
 
